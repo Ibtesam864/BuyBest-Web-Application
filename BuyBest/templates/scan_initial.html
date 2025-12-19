@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Barcode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <style>
+        #interactive {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        #test-frame {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .hover-effect {
+            transition: all 0.3s ease;
+        }
+        .hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body class="bg-[#FAFAFA] flex flex-col min-h-screen">
+    <div id="navbarContainer"></div>
+    <script>
+        fetch("/navbar_content")
+            .then((response) => response.text())
+            .then((html) => {
+                document.getElementById("navbarContainer").innerHTML = html;
+            });
+    </script>
+    <div>
+
+        <div class="flex flex-col items-center justify-center flex-1 p-4">
+            <h2 class="text-2xl font-bold text-[#212121] mb-4">Scan</h2>
+            <div class="bg-[#F1F1F1] p-6 rounded-lg text-center w-full max-w-md card-shadow">
+                <img src="https://img.icons8.com/ios-filled/50/gray/camera.png" class="mx-auto mb-2" alt="Camera" />
+                <p class="text-[#757575] mb-4">Point your camera at the product barcode</p>
+                <div id="interactive" class="viewport">
+                    <div id="test-frame"></div>
+                    <br>
+                    <div style="display: flex; justify-content: center; align-items: center; height: auto;">    
+                        <button  class="bg-[#FFB74D] text-white p-2 rounded hover-effect hover:bg-[#FF9800] " id="start-scanning" >Scan Barcode</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const startButton = document.getElementById('start-scanning');
+        let scanning = false;
+
+        startButton.addEventListener('click', () => {
+            if (!scanning) {
+                startScanning();
+                startButton.textContent = 'Stop Scanning';
+            } else {
+                stopScanning();
+                startButton.textContent = 'Start Scanning';
+            }
+            scanning = !scanning;
+        });
+
+        function startScanning() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#test-frame'),
+                    constraints: {
+                        facingMode: "environment" // Use rear camera
+                    }
+                },
+                decoder: {
+                    readers: [
+                        "ean_reader", // UPC/EAN
+                        "code_128_reader",
+                        "ean_8_reader",
+                        "upc_reader",
+                        "upc_e_reader"
+                    ]
+                }
+            }, function (err) {
+                if (err) {
+                    console.error('Quagga init error:', err);
+                    alert('Failed to initialize scanner. Please ensure camera access is allowed.');
+                    return;
+                }
+                console.log("Quagga initialized. Starting...");
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function (result) {
+                const barcode = result.codeResult.code;
+                console.log('Barcode detected:', barcode);
+                stopScanning(); // Stop scanning after detection
+                sendBarcodeToServer(barcode);
+            });
+        }
+
+        function stopScanning() {
+            Quagga.stop();
+            scanning = false;
+            startButton.textContent = 'Start Scanning';
+        }
+
+        function sendBarcodeToServer(barcode) {
+            const formData = new FormData();
+            formData.append('barcode', barcode);
+
+            fetch('/scan_barcode', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to scan_result.html with query parameters
+                        const redirectUrl = `/scan_result.html?product_name=${encodeURIComponent(data.product_name)}&brand_name=${encodeURIComponent(data.brand_name)}&is_boycotted=${data.is_boycotted}&snapshot_filename=${encodeURIComponent(data.snapshot_filename)}&alternatives=${encodeURIComponent(JSON.stringify(data.alternatives))}`;
+                        window.location.href = redirectUrl;
+                    } else {
+                        alert(data.error || 'Failed to process barcode.');
+                        startButton.textContent = 'Start Scanning';
+                        scanning = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending barcode:', error);
+                    alert('An error occurred while processing the barcode.');
+                    startButton.textContent = 'Start Scanning';
+                    scanning = false;
+                });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BuyRight - Search Restaurants</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .card-shadow {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .hover-effect {
+        transition: all 0.3s ease;
+      }
+      .hover-effect:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+    </style>
+  </head>
+  <body class="bg-[#FAFAFA] flex flex-col min-h-screen">
+    <div id="navbarContainer"></div>
+    
+    <script>
+      fetch(" /navbar_content")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("navbarContainer").innerHTML = html;
+        });
+    </script>
+
+    <!-- Main -->
+    <div class="flex flex-col items-center justify-center flex-1 p-4">
+      <h2 class="text-2xl font-bold text-[#212121] mb-4">Search Restaurants</h2>
+      <div class="w-full max-w-md mb-4">
+        <input
+          type="text"
+          class="w-full p-2 border border-gray-300 rounded"
+          placeholder="Search for restaurants..."
+        />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+        <div class="bg-[#F1F1F1] p-4 rounded-lg text-center card-shadow">
+          <h3 class="text-lg font-semibold text-[#212121]">
+            Karachi Biryani House
+          </h3>
+          <p class="text-[#757575]">Cuisine: Pakistani</p>
+          <div class="text-yellow-400">★★★★☆ 4.5</div>
+          <p class="text-[#4CAF50]">Safe to visit</p>
+        </div>
+        <div class="bg-[#F1F1F1] p-4 rounded-lg text-center card-shadow">
+          <h3 class="text-lg font-semibold text-[#212121]">Lahore Grill</h3>
+          <p class="text-[#757575]">Cuisine: BBQ</p>
+          <div class="text-yellow-400">★★★★☆ 4.2</div>
+          <p class="text-[#4CAF50]">Safe to visit</p>
+        </div>
+        <div class="bg-[#F1F1F1] p-4 rounded-lg text-center card-shadow">
+          <h3 class="text-lg font-semibold text-[#212121]">
+            Islamabad Desi Kitchen
+          </h3>
+          <p class="text-[#757575]">Cuisine: Traditional</p>
+          <div class="text-yellow-400">★★★★☆ 4.8</div>
+          <p class="text-[#4CAF50]">Safe to visit</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

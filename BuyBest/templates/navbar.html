@@ -1,0 +1,94 @@
+<div
+  class="bg-[#2E2E2E] text-white p-4 flex justify-between items-center w-full"
+  id="navbarContainer"
+>
+  <a
+    href="/index"
+    class="text-[#FFB74D] text-xl font-bold hover:underline"
+    >BuyRight</a
+  >
+  <div class="flex space-x-4 items-center">
+    <a
+      href="/home"
+      class="text-[#29B6F6] hover:underline"
+      id="navHome"
+      >Home</a
+    >
+    <a
+      href="/scan"
+      class="text-[#29B6F6] hover:underline"
+      id="navScan"
+      >Scan</a
+    >
+    <a
+      href="/search_restaurants"
+      class="text-[#29B6F6] hover:underline"
+      id="navRestaurants"
+      >Search Restaurants</a
+    >
+    <button
+      id="langSwitch"
+      class="text-[#FFB74D] bg-transparent border border-[#FFB74D] p-1 rounded hover:bg-[#FF9800] hover:text-white hover-effect"
+    >
+      اردو
+    </button>
+    <button class="text-[#757575] hover:underline" id="navLogout">
+      Logout
+    </button>
+  </div>
+</div>
+<style>
+  .hover-effect {
+    transition: all 0.3s ease;
+  }
+  .hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+</style>
+<script>
+  // Ensure the script runs after the navbar is inserted into the DOM
+  function initializeNavbar() {
+    const translations = {
+      en: {
+        navHome: "Home",
+        navScan: "Scan",
+        navRestaurants: "Search Restaurants",
+        navLogout: "Logout",
+      },
+      ur: {
+        navHome: "ہوم",
+        navScan: "اسکین",
+        navRestaurants: "ریستوراں تلاش کریں",
+        navLogout: "لاگ آؤٹ",
+      },
+    };
+
+    let currentLang = "ur";
+
+    const langSwitch = document.getElementById("langSwitch");
+    if (langSwitch) {
+      langSwitch.addEventListener("click", function () {
+        currentLang = currentLang === "ur" ? "en" : "ur";
+        this.textContent = currentLang === "ur" ? "اردو" : "English";
+
+        const t = translations[currentLang];
+        document.getElementById("navHome").textContent = t.navHome;
+        document.getElementById("navScan").textContent = t.navScan;
+        document.getElementById("navRestaurants").textContent =
+          t.navRestaurants;
+        document.getElementById("navLogout").textContent = t.navLogout;
+        console.log("Language switched to:", currentLang); 
+      });
+    } else {
+      console.error("langSwitch element not found!");
+    }
+  }
+
+  // Call initializeNavbar when the navbar is loaded (via fetch or directly)
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeNavbar);
+  } else {
+    initializeNavbar();
+  }
+</script>
