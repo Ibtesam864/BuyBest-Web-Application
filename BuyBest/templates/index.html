@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BuyRight - Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .card-shadow {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .hover-effect {
+        transition: all 0.3s ease;
+      }
+      .hover-effect:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+    </style>
+  </head>
+  <body class="bg-[#FAFAFA] flex flex-col min-h-screen">
+   
+    <div id="navbarContainer">
+    </div>
+    
+    <script>
+      fetch("/navbar_content")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("navbarContainer").innerHTML = html;
+        });
+    </script>
+
+    <!-- Main -->
+    <div class="flex flex-col items-center justify-center flex-1 p-4">
+      <h1 class="text-4xl font-bold text-[#212121] mb-4">
+        Welcome to BuyRight
+      </h1>
+      <p class="text-[#757575] text-center mb-6">
+        Empower yourself with ethical shopping choices and discover local
+        alternatives. Join our community to make a difference!
+      </p>
+      <div
+        class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4"
+      >
+        <a
+          href="/login"
+          class="bg-[#FFB74D] text-white p-4 rounded-lg text-center w-48 card-shadow hover-effect hover:bg-[#FF9800]"
+          >Login</a
+        >
+        <a
+          href="/register"
+          class="bg-[#4CAF50] text-white p-4 rounded-lg text-center w-48 card-shadow hover-effect hover:bg-[#45a049]"
+          >Register</a
+        >
+        <a
+          href="/scan"
+          class="bg-[#29B6F6] text-white p-4 rounded-lg text-center w-48 card-shadow hover-effect hover:bg-[#0288D1]"
+          >Scan Product</a
+        >
+      </div>
+      <p class="text-[#29B6F6] mt-6 hover:underline">
+        <a href="/about">Learn more about BuyRight</a>
+      </p>
+    </div>
+  </body>
+</html>
